@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Verifiable Credentials with JSON Web Signatures</title>
+  <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove" defer></script>
+  <script class="remove">
+    var respecConfig = {
+      specStatus: "unofficial",
+      editors: [
+        {
+          name: "Orie Steele",
+          company: "Transmute",
+          companyURL: "https://www.transmute.industries/",
+          w3cid: 109171,
+        },
+      ],
+      github: "transmute-industries/vc-jws",
+      shortName: "vc-jws",
+      // group: "vc",
+      localBiblio: {
+        // OAS: {
+        //   title: "OpenAPI Specification",
+        //   href: "https://swagger.io/specification/",
+        //   authors: [
+        //     "Darrel Miller",
+        //     "Jeremy Whitlock",
+        //     "Marsh Gardiner ",
+        //     "Mike Ralphson",
+        //     "Ron Ratovsky",
+        //     "Uri Sarid",
+        //   ],
+        //   status: "unofficial",
+        //   publisher: "OpenAPI Initiative",
+        // },
+      },
+      xref: {
+        specs: ["DID-CORE", "VC-DATA-MODEL", "JSON-LD"],
+        profile: "web-platform",
+      },
+      otherLinks: [
+        {
+          key: "Related Documents",
+          data: [
+            {
+              value: "Decentralized Identifiers (DIDs) v1.0",
+              href: "https://www.w3.org/TR/did-core/",
+            },
+            {
+              value: "Verifiable Credentials Data Model v1.1",
+              href: "https://www.w3.org/TR/vc-data-model/",
+            },
+          ],
+        },
+      ],
+    };
+  </script>
+</head>
+
+<body>
+  <section id="abstract">
+    <p>
+      This specification defines new
+      <a data-cite="VC-DATA-MODEL#proof-formats">proof format</a>
+      for use with
+      <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credentials</a>
+    </p>
+
+    
+    <p>
+      In addition to meeting the requirements defined in [[RFC7515]]. We
+      introduce some additional constraints to eliminate optionality and
+      improve interoperability.
+    </p>
+  </section>
+
+  <section id="sotd">
+
+    <!-- This is required. -->
+  </section>
+
+  <section>
+    <h2>Producing</h2>
+
+    <p>See also <a data-cite="RFC7515#section-5">Producing and Consuming JWSs</a>.</p>
+
+    <ul>
+      <li>
+        <p>
+          <a data-cite="RFC7515#section-4.1.4">kid</a> MUST be present in the
+          <a data-cite="RFC7515#section-4">JOSE Header</a>.
+        </p>
+        <p>
+          The value of <a data-cite="RFC7515#section-4.1.4">kid</a> MUST be
+          one of the following:
+        <ul>
+          <li>
+            <p>
+              An <a data-cite="DID-CORE#did-url-syntax">absolute DID URL</a> that
+              <a data-cite="DID-CORE#did-url-dereferencing">dereferences</a> to a
+              <a data-cite="DID-CORE#verification-material">verification method</a>
+              with public key material in <a data-cite="DID-CORE#dfn-publickeyjwk">publicKeyJwk</a>.
+            </p>
+          </li>
+          <li>
+            <p>
+              An <a data-cite="DID-CORE#relative-did-urls">relative DID URL</a> that
+              <strong>when combined with <code>iss</code></strong>
+              <a data-cite="DID-CORE#did-url-dereferencing">dereferences</a> to a
+              <a data-cite="DID-CORE#verification-material">verification method</a>
+              with public key material in <a data-cite="DID-CORE#dfn-publickeyjwk">publicKeyJwk</a>.
+            </p>
+          </li>
+          <li>
+            <p>
+              If <a data-cite="RFC7515#section-4.1.4">kid</a> is a <a data-cite="DID-CORE#relative-did-urls">relative
+                DID URL</a> in the
+              <a data-cite="RFC7515#section-4">JOSE Header</a>, then
+              <a data-cite="RFC7515#section-4.1.4">iss</a> MUST be present in the
+              <a data-cite="RFC7515#section-4">JOSE Header</a>.
+            </p>
+          </li>
+          <li>
+            <p>
+              The <a data-cite="DID-CORE#dfn-publickeyjwk">publicKeyJwk</a> is expected to verify the JWS.
+            </p>
+          </li>
+        </ul>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          The <a data-cite="RFC7515#section-2">JWS Payload</a> MUST be a sequence of octets representing the UTF-8 JSON
+          encoding
+          of the <a data-cite="VC-DATA-MODEL#dfn-credential">credential</a>.
+        </p>
+      </li>
+
+    </ul>
+  </section>
+
+  <section>
+    <h2>Consuming</h2>
+    <p>See also <a data-cite="RFC7515#section-5">Producing and Consuming JWSs</a>.</p>
+    <p>
+      In order to verify a <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credential</a> using a JWS proof,
+      the public key associated with the signature needs to be obtained. 
+      If the verifier does not already have the public key, it can be obtained through the following process:
+    </p>
+    <ul>
+      <li>
+        Decode the <a data-cite="RFC7515#section-4">JOSE Header</a>.
+      </li>
+      <li>
+        Construct an <a data-cite="DID-CORE#did-url-syntax">absolute DID URL</a> 
+        from the <a data-cite="RFC7515#section-4.1.4">kid</a> and <a data-cite="RFC7515#section-4.1.4">iss</a> if iss is present.
+      </li>
+      <li>
+        <a data-cite="DID-CORE#did-url-dereferencing">Dereferences</a> the <a data-cite="DID-CORE#did-url-syntax">absolute DID URL</a> 
+        to obtain a <a data-cite="DID-CORE#verification-material">verification method</a> which contains a <a data-cite="DID-CORE#dfn-publickeyjwk">publicKeyJwk</a>.
+      </li>
+      <li>
+        Follow the process for <a data-cite="RFC7515#section-5.2">Message Signature or MAC Validation</a>.
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Example</h2>
+    <aside
+      class="example"
+      title="A credential for a University Degree"
+    >
+      <p>This is credential that will have an external proof.</p>
+      <pre data-include="./credential.json" data-include-format="json"></pre>
+    </aside>
+
+    <aside
+      class="example"
+      title="A verifiable credential for a University Degree with an external proof"
+    >
+      <p>This verifiable credential is encoded, decode it with <a href="https://jwt.io/">jwt.io</a>.</p>
+      <pre data-include="./verifiable-credential.jws" data-include-format="text"></pre>
+    </aside>
+  </section>
+
+  <section id="conformance">
+    <p>
+      This is required for specifications that contain normative material.
+    </p>
+  </section>
+</body>
+
+</html>

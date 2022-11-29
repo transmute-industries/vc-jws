@@ -1,0 +1,14 @@
+{
+  "name": "test-vectors",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node generate.js"
+  },
+  "author": "Orie Steele",
+  "license": "ISC",
+  "dependencies": {
+    "jose": "^4.11.1"
+  }
+}
