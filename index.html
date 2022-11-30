@@ -15,6 +15,12 @@
           companyURL: "https://www.transmute.industries/",
           w3cid: 109171,
         },
+        {
+          name: "Michael Prorock",
+          company: "mesur.io",
+          companyURL: "https://mesur.io/",
+          w3cid: 130636,
+        },
       ],
       github: "transmute-industries/vc-jws",
       shortName: "vc-jws",
@@ -70,7 +76,7 @@
     <p>
       In addition to meeting the requirements defined in [[RFC7515]]. We
       introduce some additional constraints to eliminate optionality and
-      improve interoperability.
+      improve interoperability between implementations.
     </p>
   </section>
 
@@ -83,28 +89,40 @@
 
     <p>
       <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credentials </a> defines 
-      a JSON Web Token (JWT) proof format which requires the issuer and verifier to map back 
-      and forth between JWT <a data-cite="RFC7519#section-4.1">Registered Claim Names</a> and the 
+      a JSON Web Token (JWT) proof format which requires the issuer and verifier to map 
+      JWT <a data-cite="RFC7519#section-4.1">Registered Claim Names</a> and the 
       <a data-cite="VC-DATA-MODEL#terminology">Verifiable Credentials Terminology</a>.
     </p>
     <p>
-      This mapping process is complex, involves type conversions for datetime fields, 
-      and can be implemented differently by <a data-cite="VC-DATA-MODEL#issuer">issuers</a> 
-      and <a data-cite="VC-DATA-MODEL#dfn-verifier">verifiers</a> leading to interoperability and security issues.
+      This mapping process can be complex, and requires problematic operations such as type 
+      conversions for datetime fields. As a result of this complexity, this mapping can be 
+      implemented differently by <a data-cite="VC-DATA-MODEL#issuer">issuers</a> 
+      and <a data-cite="VC-DATA-MODEL#dfn-verifier">verifiers</a> which often leads to cases
+      where to interoperability is not present, or unexpected security issues are introduced.
     </p>
     <p>
-      The <a data-cite="RFC7519#section-5.2">(Content Type) Header Parameter</a> is used to 
-      define the content type without the need for a complex mapping. 
+      This specification introduces a <a data-cite="RFC7519#section-5.2">(Content Type) Header Parameter</a> 
+      that is used to define the content type for <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credentials</a>
+      that utilize <a data-cite="RFC7515">JSON Web Signatures</a> to provide signing and 
+      verification in a <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credential</a>. 
     </p>
     <p>
-      A similar approach is used at IETF to secure arbitrary content using COSE.
+      This approach, of utilizing to a <a data-cite="RFC7519#section-5.2">(Content Type) Header Parameter</a>
+      to specify a discrete set of mappings and expected behaviors in translation between formats 
+      or representations of data is used commonly in other groups to secure arbitrary content using COSE
+      and other document and data encoding formats. This approach is extensible to other data encodings
+      and may be extended to provide a mechanism for use of CBOR encodings for <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credentials</a>.
     </p>
   </section>  
 
   <section>
     <h2>Producing</h2>
 
-    <p>See also <a data-cite="RFC7515#section-5">Producing and Consuming JWSs</a>.</p>
+    <p>This specification uses normal approaches to the production and consumption of a JWS.  For additional
+    details, please see the full breakdown of the process in <a data-cite="RFC7515#section-5">Producing and Consuming JWSs</a>.</p>
+    
+    <p>Specifically related to use of JWS with VCs the following normative requirements MUST 
+    be considered in production of a JWS.</p>
 
     <ul>
       <li>
@@ -164,7 +182,12 @@
 
   <section>
     <h2>Consuming</h2>
-    <p>See also <a data-cite="RFC7515#section-5">Producing and Consuming JWSs</a>.</p>
+    <p>This specification uses normal approaches to the consumption of a JWS.  For additional
+    details, please see the full breakdown of the process in <a data-cite="RFC7515#section-5">Producing and Consuming JWSs</a>.</p>
+    
+    <p>As a part of ensuring interoperabiliity with VCs secured in the manner described in this specification, 
+    resolution of public key material must be considered, as a verifier may not have access to the public key.</p>
+    
     <p>
       In order to verify a <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credential</a> using a JWS proof,
       the public key associated with the signature needs to be obtained. 
@@ -211,6 +234,8 @@
 
     <h2>IANA Considerations</h2>
     <section id="media-type">
+      
+      
       <h2>The <code>application/credential+json</code> Media Type</h2>
       <p>
         This specification registers the <code>application/credential+json</code> MIME Media Type specifically for identifying documents
