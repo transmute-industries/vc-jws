@@ -19,7 +19,7 @@ const privateKeyJwk = {
 
   const privateKey = await jose.importJWK(privateKeyJwk);
   const jws = await new jose.CompactSign(payload)
-      .setProtectedHeader({ kid: credential.issuer + '#key-0', alg: privateKeyJwk.alg, cty: 'application/vc+json' })
+      .setProtectedHeader({ kid: credential.issuer + '#key-0', alg: privateKeyJwk.alg, cty: 'application/credential+json' })
       .sign(privateKey);
 
   fs.writeFileSync('../verifiable-credential.jws', jws);
