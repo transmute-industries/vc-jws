@@ -103,7 +103,7 @@
     <p>
       This specification introduces a <a data-cite="RFC7519#section-5.2">(Content Type) Header Parameter</a> 
       that is used to define the content type for <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credentials</a>
-      that utilize <a data-cite="RFC7515">JSON Web Signatures</a> to provide signing and 
+      that utilize <a data-cite="RFC7515#section-3.1">JSON Web Signatures</a> to provide signing and 
       verification in a <a data-cite="VC-DATA-MODEL#credentials">Verifiable Credential</a>. 
     </p>
     <p>
@@ -168,6 +168,45 @@
         </ul>
         </p>
       </li>
+
+      <li>
+        <p>
+          <a data-cite="RFC7519#section-5.3">iss</a> MAY be present in <a data-cite="RFC7515#section-4.1">JOSE Header</a>, 
+          and MUST match the <a data-cite="DID-CORE#verification-methods">controller</a> of the dereferenced <a data-cite="DID-CORE#dfn-publickeyjwk">publicKeyJwk</a>.
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <a data-cite="RFC7515#section-4.1.1">alg</a> MUST be present in <a data-cite="RFC7515#section-4.1">JOSE Header</a>, 
+          and MUST match the <a data-cite="RFC7517#section-4.4">alg</a> in the dereferenced <a data-cite="DID-CORE#dfn-publickeyjwk">publicKeyJwk</a>.
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <a data-cite="RFC7519#section-5.2">content type (cty)</a> MUST be present in <a data-cite="RFC7515#section-4.1">JOSE Header</a>, 
+          and MUST be <code>application/credential+json</code>.
+        </p>
+      </li>
+
+      <aside
+        class="example"
+        title="Using content type to identify payload types."
+      >
+        <p>Source: <a data-cite="rfc7517#appendix-C.2">RFC7517</a></p>
+        <pre class="example" title="">
+          {
+            "alg":"PBES2-HS256+A128KW",
+            "p2s":"2WCTcJZ1Rvd_CJuJripQ1w",
+            "p2c":4096,
+            "enc":"A128CBC-HS256",
+            "cty":"jwk+json"
+          }
+        </pre>
+      </aside>
+
+    
 
       <li>
         <p>
